@@ -10,6 +10,15 @@ import time
 import datetime
 import picamera
 
+#グローバル変数
+HEIGHT=960
+WIDTH=1280
+r_ph=13
+l_ph=26
+r_pwm=9
+l_pwm=19
+I=0
+
 #ログの設定
 logging.basicConfig(level=logging.INFO)#ログレベルの設定
 logger=logging.getLogger('逆光フェーズ')#ログの名前
@@ -20,19 +29,16 @@ logger.addHandler(file_handler)
 #GPIO初期設定
 duty=40
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(27,GPIO.OUT)
-GPIO.setup(22,GPIO.OUT)
-GPIO.setup(23,GPIO.OUT)
-GPIO.setup(24,GPIO.OUT)
-right=GPIO.PWM(27,50)
-left=GPIO.PWM(23,50)
+GPIO.setup(r_pwm,GPIO.OUT)
+GPIO.setup(r_ph,GPIO.OUT)
+GPIO.setup(l_pwm,GPIO.OUT)
+GPIO.setup(l_ph,GPIO.OUT)
+right=GPIO.PWM(r_pwm,100)
+left=GPIO.PWM(l_pwm,100)
 right.start(0)
 left.start(0)
 
-#グローバル変数
-HEIGHT=960
-WIDTH=1280
-I=0
+
 
 def	cap():
     global HEIGHT,WIDTH,I
@@ -65,20 +71,21 @@ def backlit():#逆光判定
     
 
 def avoidance():#逆光回避
+    global r_ph,l_ph
     logging.info('Backlight avoidance')
     t_end=time.time()+2
     while time.time()<=t_end:#前進
         right.ChangeDutyCycle(duty)
-        right_ph=GPIO.output(22,GPIO.LOW)
+        right_ph=GPIO.output(r_ph,GPIO.LOW)
         left.ChangeDutyCycle(duty)
-        left_ph=GPIO.output(24,GPIO.LOW)
+        left_ph=GPIO.output(l_ph,GPIO.LOW)
     right.ChangeDutyCycle(0)
     left.ChangeDutyCycle(0)
-#    while time.time()+1:#反転(右回り)
-#        right.ChangeDutyCycle(0)
-#        right_ph=GPIO.output(22,GPIO.LOW)
-#        left.ChangeDutyCycle(duty)
-#        left_ph=GPIO.output(24,GPIO.LOW)
+    while time.time()+1:#反転(右回り)
+        right.ChangeDutyCycle(0)
+        right_ph=GPIO.output(r_ph,GPIO.LOW)
+        left.ChangeDutyCycle(duty)
+        left_ph=GPIO.output(l_ph,GPIO.LOW)
 
 def main():
     global I

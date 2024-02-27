@@ -13,6 +13,10 @@ import picamera
 #グローバル変数
 HEIGHT=960#画像ピクセル数(縦)
 WIDTH=1280#画像ピクセル数(横)
+r_ph=13
+l_ph=26
+r_pwm=9
+l_pwm=19
 I=0
 
 
@@ -26,12 +30,12 @@ logger.addHandler(file_handler)
 #GPIO初期設定
 duty=30
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(6,GPIO.OUT)
-GPIO.setup(13,GPIO.OUT)
-GPIO.setup(19,GPIO.OUT)
-GPIO.setup(26,GPIO.OUT)
-right=GPIO.PWM(6,50)
-left=GPIO.PWM(19,50)
+GPIO.setup(r_pwm,GPIO.OUT)
+GPIO.setup(r_ph,GPIO.OUT)
+GPIO.setup(l_pwm,GPIO.OUT)
+GPIO.setup(l_ph,GPIO.OUT)
+right=GPIO.PWM(r_pwm,200)
+left=GPIO.PWM(l_pwm,200)
 right.start(0)
 left.start(0)
 
@@ -39,6 +43,8 @@ left.start(0)
 def	cap():
     global HEIGHT,WIDTH,I
     with picamera.PiCamera() as	camera:
+        camera.exposure_mode = 'off' #露出モード 
+        camera.meter_mode = 'average' #測光モード
         camera.resolution=(WIDTH,HEIGHT)
         camera.start_preview()
         camera.capture(f'picture{I}.jpg')
@@ -117,32 +123,6 @@ def detection():
     if (math.isclose(bottom/length,1/2, rel_tol=0, abs_tol=100.0))==True:
         logger.info("tri")
         out=cv.imread(f'dilate{I}.jpg')
-#        cv.line(out,
-#            pt1=(x_l, y_l),
-#            pt2=(x_t, y_t),
-#            color=(0, 0, 255),
-#            thickness=3,
-#            lineType=cv.LINE_4,
-#            shift=0)
-#        cv.imwrite(f'tri{I}.jpg', out)
-#        out=cv.imread(f'tri{I}.jpg')
-#        cv.line(out,
-#                 pt1=(x_t, y_t),
-#                 pt2=(x_r, y_r),
-#                 color=(0, 255, 0),
-#                 thickness=3,
-#                 lineType=cv.LINE_4,
-#                 shift=0)
-#        cv.imwrite(f'tri{I}.jpg', out)
-#        out=cv.imread(f'tri{I}.jpg')
-#        cv.line(out,
-#                 pt1=(x_l, y_l),
-#                 pt2=(x_r, y_r),
-#                 color=(255, 0, 0),
-#                 thickness=3,
-#                 lineType=cv.LINE_4,
-#                 shift=0)
-#        cv.imwrite(f'tri{I}.jpg', out)
         if bottom>=1000:#要調整
             return 1
         return x_center
@@ -151,43 +131,53 @@ def detection():
        return -1
    
    
-def moter(coordinate):
-    global WIDTH
+def moter(direction):
+    global WIDTH,r_ph,l_ph
     logger.info('motor control')
     t_end=time.time()+1.0
     if coordinate<=(WIDTH//3):
         while time.time()<=t_end:
             right.ChangeDutyCycle(duty)
-            right_ph=GPIO.output(13,GPIO.LOW)
+            right_ph=GPIO.output(r_ph,GPIO.LOW)
             left.ChangeDutyCycle(0)
-            left_ph=GPIO.output(26,GPIO.HIGH)
+            left_ph=GPIO.output(l_ph,GPIO.HIGH)
         logging.info('left fin')
     if (WIDTH//3)<coordinate and coordinate<(WIDTH//3*2):
         while time.time()<=t_end:
             right.ChangeDutyCycle(duty)
-            right_ph=GPIO.output(13,GPIO.LOW)
+            right_ph=GPIO.output(r_ph,GPIO.LOW)
             left.ChangeDutyCycle(duty)
-            left_ph=GPIO.output(26,GPIO.LOW)
+            left_ph=GPIO.output(l_ph,GPIO.LOW)
         logging.info('forward fin')
     if (WIDTH//3*2)<=coordinate and coordinate<=WIDTH:
         while time.time()<=t_end:
             right.ChangeDutyCycle(0)
-            right_ph=GPIO.output(13,GPIO.HIGH)
+            right_ph=GPIO.output(r_ph,GPIO.HIGH)
             left.ChangeDutyCycle(duty)
-            left_ph=GPIO.output(26,GPIO.LOW)
+            left_ph=GPIO.output(l_ph,GPIO.LOW)
         logging.info('right fin')
 #    right.ChangeDutyCycle(0)
 #    left.ChangeDutyCycle(0)
    
 def goal():
-#    logger.info('Just before the goal!')
-#    t_end=time.time()+3
-#    while time.time()<=t_end:
-#        right.ChangeDutyCycle(duty)
-#        right_ph=GPIO.output(22,GPIO.LOW)
-#        left.ChangeDutyCycle(duty)
-#        left_ph=GPIO.output(24,GPIO.LOW)
+    logger.info('Just before the goal!')
+    t_end=time.time()+3
+    while time.time()<=t_end:
+        right.ChangeDutyCycle(duty)
+        right_ph=GPIO.output(22,GPIO.LOW)
+        left.ChangeDutyCycle(duty)
+        left_ph=GPIO.output(24,GPIO.LOW)
     logger.info('GOAL!!')
+
+def search():
+    global r_ph,l_ph
+    logger.info("serch")
+    t_end=time.time()+1.0
+    while time.time()<=t_end:
+        right.ChangeDutyCycle(0)
+        right_ph=GPIO.output(r_ph,GPIO.HIGH)
+        left.ChangeDutyCycle(duty)
+        left_ph=GPIO.output(l_ph,GPIO.LOW)
 
 def main():
     global I
@@ -196,7 +186,7 @@ def main():
         cap()
         key=detection()
         if key==-1:
-            pass
+            search()
         elif key==1:
             goal()
             break
