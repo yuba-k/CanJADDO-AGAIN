@@ -8,7 +8,7 @@ import picamera
 
 def	cap(HEIGHT,WIDTH):
     with picamera.PiCamera() as	camera:
-        camera.exposure_mode = 'off' #露出モード 
+        camera.exposure_mode = 'auto' #露出モード 
         camera.meter_mode = 'average' #測光モード
         camera.resolution=(WIDTH,HEIGHT)
         camera.start_preview()

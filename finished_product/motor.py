@@ -43,7 +43,7 @@ def move(direction, duty, sec):
         logger.info(f"duty:{duty}")
         logger.info(f"right")
         while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty*0.95)
+            right.ChangeDutyCycle(duty*0.5)
             left.ChangeDutyCycle(duty)
         right.ChangeDutyCycle(0)
         left.ChangeDutyCycle(0)
@@ -51,8 +51,8 @@ def move(direction, duty, sec):
         logger.info(f"duty:{duty}")
         logger.info(f"left")
         while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty*0.95)
-            left.ChangeDutyCycle(0)
+            right.ChangeDutyCycle(duty)
+            left.ChangeDutyCycle(duty*0.5)
         right.ChangeDutyCycle(0)
         left.ChangeDutyCycle(0)
     elif direction == "straight" or direction=="goal":
@@ -63,14 +63,16 @@ def move(direction, duty, sec):
             left.ChangeDutyCycle(duty)
         right.ChangeDutyCycle(0)
         left.ChangeDutyCycle(0)
-    # elif direction=="back":
-    #     logger.info(f"duty:{duty}")
-    #     logger.info(f"straight")
-    #     while time.time() <= t_end + sec:
-    #         right.ChangeDutyCycle(duty)
-    #         left.ChangeDutyCycle(duty)
-    #     right.ChangeDutyCycle(0)
-    #     left.ChangeDutyCycle(0)
+    elif direction=="back":
+        right_ph = GPIO.output(r_ph, GPIO.HIGH)
+        left_ph = GPIO.output(l_ph, GPIO.HIGH)
+        logger.info(f"duty:{duty}")
+        logger.info(f"back")
+        while time.time() <= t_end + sec:
+            right.ChangeDutyCycle(duty)
+            left.ChangeDutyCycle(duty)
+        right.ChangeDutyCycle(0)
+        left.ChangeDutyCycle(0)
 
 def avoidance(duty,sec_1,sec_2):#逆光回避
     move("straight",duty,sec_1)
