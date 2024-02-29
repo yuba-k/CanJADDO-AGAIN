@@ -8,6 +8,7 @@ import gps
 import parachute_avoidance as pa
 import backlib
 import image
+import buzzer as bz
 #python-library
 import time
 import logging
@@ -44,10 +45,13 @@ while True:#逆光回避
     motor.move(direction,20,1.0)
     if direction=="goal":
         logging.info("goal!!")
+        bz.buzz()
         break
     else:
         pass
     if time.time()>=close:
+        bz.buzz()
         logging.info("Forced termination/goal judgment")
 
 logger.info("End of all phases")
+GPIO.cleanup()
