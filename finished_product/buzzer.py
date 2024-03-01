@@ -4,11 +4,19 @@ import RPi.GPIO as GPIO
 import time
 
 def buzz():
-    GPIO.setmode(BCM)
-    GPIO.setup(14,GPIO.OUT)
-    t_end=time.time()+20
-    while time.time()<=t_end:
-        buzzer=GPIO.PWM(14,400)
-        buzzer.start(0)
-        buzzer.ChangeDutyCycle(50)
-    GPIO.cleanup()
+    buzz=12
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(buzz,GPIO.OUT)
+
+    buzzer=GPIO.PWM(buzz,523)
+    buzzer.start(0)
+    time.sleep(1)
+    buzzer.ChangeDutyCycle(50)
+
+    while True:
+        buzzer.ChangeFrequency(523)
+        time.sleep(0.02)
+        buzzer.ChangeFrequency(658)
+        time.sleep(0.02)
+        buzzer.ChangeFrequency(784)
+        time.sleep(0.02)

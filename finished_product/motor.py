@@ -77,3 +77,8 @@ def move(direction, duty, sec):
 def avoidance(duty,sec_1,sec_2):#逆光回避
     move("straight",duty,sec_1)
     move("right",duty,sec_2)
+
+def pra(duty,sec_1,sec_2):
+    move("back",duty,sec_1)
+    move("right",duty,2)
+    move("straight",duty,sec_2)

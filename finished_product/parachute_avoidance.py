@@ -4,7 +4,6 @@ import math
 import numpy as np
 import picamera
 import logging.config
-import RPi.GPIO	as GPIO
 import time
 from PIL import image
 
@@ -12,22 +11,6 @@ from PIL import image
 logging.config.fileConfig('logging.ini')
 logger = logging.getLogger(__name__)
 
-#グローバル変数
-r_ph=22
-l_ph=24
-r_pwm=27
-l_pwm=23
-#GPIO初期設定
-duty=60
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(r_pwm,GPIO.OUT)
-GPIO.setup(r_ph,GPIO.OUT)
-GPIO.setup(l_pwm,GPIO.OUT)
-GPIO.setup(l_ph,GPIO.OUT)
-right=GPIO.PWM(r_pwm,200)
-left=GPIO.PWM(l_pwm,200)
-right.start(0)
-left.start(0)
 
 def parachute():
     img=cv.imread(f"picture.jpg")
