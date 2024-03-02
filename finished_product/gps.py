@@ -21,11 +21,11 @@ logging.config.fileConfig('logging.ini')
 logger = logging.getLogger(__name__)
 
 def main():
-    duty = 50
+    duty = 60
     sec = 10
 
     #ゴールの座標をここに入力！
-    coordinate_goal = {'lat':31.731461, 'lon':130.726171}
+    coordinate_goal = {'lat':31.731971, 'lon':130.726491}
     logger.info(f"coordinate_goal:{coordinate_goal}")
 
     coordinate_new = get_gpsdata()
