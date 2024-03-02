@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def parachute():
     img=cv.imread(f"picture.jpg")
-    HEIGHT,WIDTH=img.size
+    HEIGHT,WIDTH=img.shape
     img=cv.flip(img,-1)
     img=img[HEIGHT//2:HEIGHT,0:WIDTH]#空の情報取得
     #二値化
