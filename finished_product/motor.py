@@ -60,6 +60,7 @@ def move(direction, duty, sec):
             left.ChangeDutyCycle(duty)
         right.ChangeDutyCycle(0)
         left.ChangeDutyCycle(0)
+    return
 
 def advance(direction, duty, sec):
     move(direction,duty,sec)
