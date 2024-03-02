@@ -146,4 +146,4 @@ def move(direction, duty, sec):
 if __name__ == '__main__':
     init()
     data = get_gpsdata()
-    print(data[lat], data[lon])
+    print(data['lat'], data['lon'])
