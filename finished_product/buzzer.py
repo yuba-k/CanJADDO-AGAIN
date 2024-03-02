@@ -44,11 +44,13 @@ duration_dic = {
     'one-third' : 1/3,     'quarter' : 0.25,
 }
 
-def buzz():
+def init():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(buzzerpin,GPIO.OUT)
     global buzzer
     buzzer=GPIO.PWM(buzzerpin,500)
+
+def buzz():
     buzzer.start(0)
     time.sleep(1)
     buzzer.ChangeDutyCycle(50)

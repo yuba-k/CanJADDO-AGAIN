@@ -1,13 +1,15 @@
 ﻿# -*- coding: utf-8 -*-
 #逆光回避動作
 import cv2  as cv
-import numpy as np
-from matplotlib import pyplot as plt
+#import numpy as np
+#from matplotlib import pyplot as plt
 import logging.config
-import math
-import RPi.GPIO	as GPIO
-import time
-import datetime
+import camera
+import motor
+#import math
+#import RPi.GPIO	as GPIO
+#import time
+#import datetime
 
 # #ログの設定
 # logging.basicConfig(level=logging.INFO)#ログレベルの設定
@@ -18,11 +20,12 @@ import datetime
 # logger.addHandler(file_handler)
 
 
-def backlight():#逆光判定
+def backlight():#逆光判定   return:is backlight
     logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     logger.info('backlight confirmation')
     # 画像を読み込む
+    camera.cap(240,320)
     im = cv.imread(f'picture.jpg')
     HEIGHT,WIDTH,_=im.shape
     img=im[HEIGHT//2:HEIGHT,0:WIDTH]#空の情報取得
@@ -33,7 +36,7 @@ def backlight():#逆光判定
     # 標準偏差を計算する
     _, stddev = cv.meanStdDev(gray)
     logger.info(f'standard deviation:{stddev}')
-    if stddev>=15:#逆光でない
-        return 0
-    else:#逆光
-        return -1
+    if stddev<15:#逆光なら
+        motor.avoidance(20,30,2.0)#duty比/直進時間[s]/右折時間[s]
+        return True
+    return False

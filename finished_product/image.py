@@ -2,14 +2,16 @@
 #物体検出からモータ動作のみ
 import cv2  as cv
 import numpy as np
-from matplotlib import pyplot as plt
-from PIL import Image
+#from matplotlib import pyplot as plt
+#from PIL import Image
 import logging.config
 import math
-import RPi.GPIO	as GPIO
-import time
-import datetime
-import picamera
+#import RPi.GPIO	as GPIO
+import camera
+import motor
+#import time
+#import datetime
+#import picamera
 
 # #ログの設定
 # logging.basicConfig(level=logging.INFO)#ログレベルの設定
@@ -24,6 +26,7 @@ def detection():
     logger = logging.getLogger(__name__)
     logger.info("color cone detection")
     #画像読み込み
+    camera.cap(960,1280)
     img=cv.imread(f"picture.jpg")
     img=cv.flip(img,-1)
     HEIGHT,WIDTH,_=img.shape#画像サイズ取得
@@ -94,11 +97,12 @@ def detection():
             return "goal"
         else:
             if x_center<=(WIDTH//3):
-                return "left"
-            elif (WIDTH//3)<x_center and coordinate<x_center:
-                return "straight"
+                motor.move("left")
+            elif (WIDTH//3)<x_center and x_center<(WIDTH//3*2):
+                motor.move("straight")
             else:
-                return "right"
+                motor.move("right")
+        return
     else:
-       logger.info('no tri')
-       return "search"
+        logger.info('no tri')
+        return "search"

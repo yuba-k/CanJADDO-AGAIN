@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import cv2  as cv
-import math
-import numpy as np
-import picamera
+#import math
+#import numpy as np
+import camera
+import motor
 import logging.config
 import RPi.GPIO	as GPIO
 import time
@@ -27,10 +28,9 @@ def parachute():
     all_area=HEIGHT*WIDTH
     white_area=cv.countNonZero(img)
     black_area=all_area-white_area
+    
     values=black_area/all_area*100
     if values>=10:#黒が%以上ならパラシュートアリと判断
-        logger.info(f"{values}%")
-        return -1
-    else:
-        logger.info(f"{values}%")
-        return 0
+        motor.para()
+    logger.info(f"{values}%")
+    return
