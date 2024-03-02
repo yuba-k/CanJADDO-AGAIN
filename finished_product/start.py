@@ -2,11 +2,10 @@
 import RPi.GPIO as GPIO
 import time
 
-st_pin=24
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(st_pin, GPIO.IN)
-
 def awaiting():
+    st_pin=24
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(st_pin, GPIO.IN)
     while(True):
         value= GPIO.input(st_pin)
         print(value)
