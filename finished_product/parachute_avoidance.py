@@ -16,7 +16,7 @@ def parachute():
     
     img=cv.imread(f"picture.jpg")
     img=cv.flip(img,-1)
-    HEIGHT,WIDTH,_=img.shape()
+    HEIGHT,WIDTH,_=img.shape
 
     #二値化
     dst = cv.cvtColor(img, cv.COLOR_BGR2GRAY)

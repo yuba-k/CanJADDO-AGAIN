@@ -70,14 +70,14 @@ def main():
 
         #目標と現在位置との距離を三平方より導出
         distance=math.sqrt(coordinate_diff_goal['lat']**2+coordinate_diff_goal['lon']**2)
-        if distance<=0.005:
+        if distance<=0.00005:
             return 0#距離が0.005km(5m)以下になったらGPSフェーズ終了
         
         logger.info(f"距離{distance}")
         print("{:.3f}".format(degree))
 
         if degree <= -45:
-            motor.move("left", duty, 4*degree/180)   #角度が大きければ大きいほど，曲がる量を多く
+            motor.move("left", duty, 4*(-degree)/180)   #角度が大きければ大きいほど，曲がる量を多く
             motor.move("straight", duty, sec)
         elif degree >= 45:
             motor.move("right", duty, 4*degree/180)
@@ -112,36 +112,6 @@ def get_gpsdata():
 def signal_handler(sig, frame):
     print("\nExiting the program.")
     sys.exit(0)
-
-def move(direction, duty, sec):
-    t_end = time.time()
-    right_ph = GPIO.output(11, GPIO.LOW)
-    left_ph = GPIO.output(19, GPIO.LOW)
-    right_duty = left_duty = duty
-
-    logger.info(f"duty:{duty}")
-    if direction == "right":    #右に曲がる
-        logger.info(f"right")
-        right_duty *= 0.6       #右足を弱く
-#	    left_duty = duty
-        
-    elif direction == "left":   #左に曲がる
-        logger.info(f"left")
-#       right_duty = duty
-        left_duty *= 0.6        #左足を弱く
-        
-    elif direction == "straight":   #まっすぐ
-        logger.info(f"straight")
-#       right_duty = duty
-#	    left_duty = duty
-        
-    while time.time() <= t_end + sec:   #実際に動く
-        right.ChangeDutyCycle(right_duty)
-        left.ChangeDutyCycle(left_duty)
-        
-    right.ChangeDutyCycle(0)
-    left.ChangeDutyCycle(0)
-    time.sleep(2)   #モータードライバのオーバーヒート対策
 
 if __name__ == '__main__':
     init()

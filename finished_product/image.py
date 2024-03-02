@@ -97,11 +97,11 @@ def detection():
             return "goal"
         else:
             if x_center<=(WIDTH//3):
-                motor.move("left")
+                motor.advance("left",50,0.5)
             elif (WIDTH//3)<x_center and x_center<(WIDTH//3*2):
-                motor.move("straight")
+                motor.advance("straight",50,2.0)
             else:
-                motor.move("right")
+                motor.advance("right",50,0.5)
         return
     else:
         logger.info('no tri')

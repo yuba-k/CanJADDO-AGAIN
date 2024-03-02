@@ -26,12 +26,12 @@ def move(direction, duty, sec):
 
     logger.info(f"duty:{duty}")
     if direction == "right" or direction=="search":    #右に曲がる
-        logger.info(f"right")
+        logger.info("right")
         right_duty *= 0.6       #右足を弱く
 #	      left_duty = duty
         
     elif direction == "left":   #左に曲がる
-        logger.info(f"left")
+        logger.info("left")
 #       right_duty = duty
         left_duty *= 0.6        #左足を弱く
         
@@ -44,8 +44,9 @@ def move(direction, duty, sec):
         right_ph = GPIO.output(r_ph, GPIO.HIGH) #モーターを反転
         left_ph = GPIO.output(l_ph, GPIO.HIGH)
 #       right_duty = duty
-#	      left_duty = duty
+#	    left_duty = duty
         
+    left_duty += 1
     while time.time() <= t_end + sec:   #実際に動く
         right.ChangeDutyCycle(right_duty)
         left.ChangeDutyCycle(left_duty)

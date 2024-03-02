@@ -15,5 +15,5 @@ def awaiting():
             print("program start")
             break
         time.sleep(1.0)
-    time.sleep(30)#パラシュート展開後待機時間
+    time.sleep(1)#パラシュート展開後待機時間
     return

@@ -40,7 +40,7 @@ try:
     start.awaiting()#着地展開まで待機
     scene = "start"
     
-    pa.parachute()
+#    pa.parachute()
     scene = "search_with_GPS"
 
     while True:
@@ -49,15 +49,21 @@ try:
             scene = "first_avoid_backlit"
             
         if scene == "first_avoid_backlit":    #逆光回避（初回）
-            IsBacklit = backlit.backlight()                
+            IsBacklit = backlit.backlight()
+            scene = "detect_with_camera"               
         
         if scene == "detect_with_camera":   #カメラによるコーン検知
-            image.detection()
+            result = image.detection()
+            if result == 'search':
+                motor.search(60, 0.5)
+            elif result == 'goal':
+                scene = 'goal'
             detect_counter+=1
             if detect_counter >= 10:
                 scene = "avoid_backlit"
         
         if scene == "avoid_backlit":
+            detect_counter = 0
             IsBacklit = backlit.backlight()
             if IsBacklit:
                 backlit_counter+=1
@@ -67,6 +73,7 @@ try:
                 scene = "search_with_GPS"
             
         if scene=="goal":
+            motor.advance(goal, 40, 3)
             logging.info("goal!!")
             bz.buzz()
             break
