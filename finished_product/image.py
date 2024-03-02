@@ -18,15 +18,15 @@ import picamera
 # file_handler=logging.FileHandler('/home/pi/sample/history.log',	encoding='utf-8')
 # file_handler.setFormatter(formatter)
 # logger.addHandler(file_handler)
-logging.config.fileConfig('logging.ini')
-logger = logging.getLogger(__name__)
 
 def detection():
+    logging.config.fileConfig('logging.ini')
+    logger = logging.getLogger(__name__)
     logger.info("color cone detection")
     #画像読み込み
     img=cv.imread(f"picture.jpg")
     img=cv.flip(img,-1)
-    HEIGHT,WIDTH=img.size#画像サイズ取得
+    HEIGHT,WIDTH,_=img.shape#画像サイズ取得
     # 赤色の検出
     # HSV色空間に変換
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)

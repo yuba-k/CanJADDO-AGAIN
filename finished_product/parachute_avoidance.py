@@ -5,7 +5,7 @@ import numpy as np
 import picamera
 import logging.config
 import time
-from PIL import image
+from PIL import Image
 
 #ログの設定の読み込み
 logging.config.fileConfig('logging.ini')
