@@ -28,7 +28,7 @@ def parachute():
     white_area=cv.countNonZero(img)
     black_area=all_area-white_area
     values=black_area/all_area*100
-    if values>=10:
+    if values>=10:#黒が%以上ならパラシュートアリと判断
         logger.info(f"{values}%")
         return -1
     else:
