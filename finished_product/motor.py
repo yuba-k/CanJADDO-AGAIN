@@ -7,11 +7,6 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 
-#グローバル変数
-r_ph=11
-l_ph=19
-r_pwm=13
-l_pwm=26
 
 # #ログの設定
 # logging.basicConfig(level=logging.INFO)#ログレベルの設定
@@ -20,21 +15,13 @@ l_pwm=26
 # file_handler=logging.FileHandler('/home/pi/sample/history.log',	encoding='utf-8')
 # file_handler.setFormatter(formatter)
 # logger.addHandler(file_handler)
-logging.config.fileConfig('logging.ini')
-logger = logging.getLogger(__name__)
 
-#GPIO初期設定
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(r_pwm,GPIO.OUT)
-GPIO.setup(r_ph,GPIO.OUT)
-GPIO.setup(l_pwm,GPIO.OUT)
-GPIO.setup(l_ph,GPIO.OUT)
-right=GPIO.PWM(r_pwm,200)
-left=GPIO.PWM(l_pwm,200)
-right.start(0)
-left.start(0)
 
 def move(direction, duty, sec):
+    global r_ph,l_ph,r_pwm,l_pwm,right,left
+    GPIO.setmode(GPIO.BCM)
+    logging.config.fileConfig('logging.ini')
+    logger = logging.getLogger(__name__)
     t_end = time.time()
     right_ph = GPIO.output(r_ph, GPIO.LOW)
     left_ph = GPIO.output(l_ph, GPIO.LOW)
@@ -74,11 +61,38 @@ def move(direction, duty, sec):
         right.ChangeDutyCycle(0)
         left.ChangeDutyCycle(0)
 
+def advance(direction, duty, sec):
+    move(direction,duty,sec)
+
+def search(duty,sec_1):
+    move("right",duty,sec_1)
+
+
 def avoidance(duty,sec_1,sec_2):#逆光回避
     move("straight",duty,sec_1)
     move("right",duty,sec_2)
 
 def pra(duty,sec_1,sec_2):
     move("back",duty,sec_1)
-    move("right",duty,2)
+    move("right",duty,3)
     move("straight",duty,sec_2)
+
+def init():
+    global r_ph,l_ph,r_pwm,l_pwm,right,left
+    right=None
+    left=None
+    GPIO.setwarnings(False)
+    r_ph=11
+    l_ph=19
+    r_pwm=13
+    l_pwm=26
+    #GPIO初期設定
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(r_pwm,GPIO.OUT)
+    GPIO.setup(r_ph,GPIO.OUT)
+    GPIO.setup(l_pwm,GPIO.OUT)
+    GPIO.setup(l_ph,GPIO.OUT)
+    right=GPIO.PWM(r_pwm,200)
+    left=GPIO.PWM(l_pwm,200)
+    right.start(0)
+    left.start(0)
