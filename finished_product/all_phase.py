@@ -45,7 +45,7 @@ try:
 
     while True:
         if scene == "search_with_GPS":  #位置情報による接近
-#           gps.main()
+            gps.main()
             scene = "first_avoid_backlit"
             
         if scene == "first_avoid_backlit":    #逆光回避（初回）

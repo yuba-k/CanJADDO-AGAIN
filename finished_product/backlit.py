@@ -37,6 +37,6 @@ def backlight():#逆光判定   return:is backlight
     _, stddev = cv.meanStdDev(gray)
     logger.info(f'standard deviation:{stddev}')
     if stddev<15:#逆光なら
-        motor.avoidance(20,30,2.0)#duty比/直進時間[s]/右折時間[s]
+        motor.avoidance(50,15,2.0)#duty比/直進時間[s]/右折時間[s]
         return True
     return False
