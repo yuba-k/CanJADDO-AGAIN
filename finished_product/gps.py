@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     duty = 50
-    sec = 8
+    sec = 10
 
     #ゴールの座標をここに入力！
     coordinate_goal = {'lat':31.731461, 'lon':130.726171}
@@ -103,6 +103,7 @@ def init():
     #出力頻度は1000[ms]間隔
 
 def get_gpsdata(): 
+    time.sleep(3)
     uart.reset_input_buffer()   #シリアル通信のバッファ消去
     time.sleep(1)
     gps.update()
@@ -141,3 +142,8 @@ def move(direction, duty, sec):
     right.ChangeDutyCycle(0)
     left.ChangeDutyCycle(0)
     time.sleep(2)   #モータードライバのオーバーヒート対策
+
+if __name__ == '__main__':
+    init()
+    data = get_gpsdata()
+    print(data[lat], data[lon])
