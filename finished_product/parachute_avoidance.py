@@ -30,7 +30,7 @@ def parachute():
     black_area=all_area-white_area
     
     values=black_area/all_area*100
-    if values>=10:#黒が%以上ならパラシュートアリと判断
+    if values>=2:#黒が%以上ならパラシュートアリと判断
         motor.para()
     logger.info(f"{values}%")
     return
