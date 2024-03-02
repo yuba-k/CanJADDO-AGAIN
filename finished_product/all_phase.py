@@ -6,7 +6,7 @@ import motor
 import start
 import gps
 import parachute_avoidance as pa
-import backlib
+import backlit
 import image
 import buzzer as bz
 #python-library
@@ -23,51 +23,58 @@ beginning=time.time()#競技開始時間
 close=beginning+(19*60)#強制終了時間
 
 #カウント
-cnt=0
+detect_counter = 0
+backlit_counter = 0
+timer = 0
+
+#初期化
+motor.init()
+start.init()
+gps.init()
+bz.init()
 
 #main
 try:
-    motor.init()
+    scene = "waiting start"
+    
     start.awaiting()#着地展開まで待機
-    direction="default"
-    while direction!=0:#パラシュート回避
-        camera.cap(320,240)
-        direction=pa.parachute()
-        if direction==-1:
-            motor.pra(40,10,10)#後進時間,右転後の前進時間
-    gps.main()#位置情報による接近
-    t_end=time.time()+60
+    scene = "start"
+    
+    pa.parachute()
+    scene = "search_with_GPS"
+
     while True:
-        if time.time()>=t_end and cnt==60:
-            gps.main()
-            t_end=time.time()+30
-        camera.cap(320,240)
-        key=backlib.backlight()
-        if key==-1:
-            motor.avoidance(20,30,2.0)#duty比/直進時間[s]/右折時間[s]
-        camera.cap(960,1280)
-        direction=image.detection()
-        if direction=="search":
-            motor.search(50,1.0)
-            cnt=cnt+1
-            if cnt==8:
-                while key!=-1:
-                    key=backlib.backlight()
-                    motor.avoidance(20,30,2.0)
-                cnt=0
+        if scene == "search_with_GPS":  #位置情報による接近
+#           gps.main()
+            scene = "first_avoid_backlit"
+            
+        if scene == "first_avoid_backlit":    #逆光回避（初回）
+            IsBacklit = backlit.backlight()                
+        
+        if scene == "detect_with_camera":   #カメラによるコーン検知
+            image.detection()
+            detect_counter+=1
+            if detect_counter >= 10:
+                scene = "avoid_backlit"
+        
+        if scene == "avoid_backlit":
+            IsBacklit = backlit.backlight()
+            if IsBacklit:
+                backlit_counter+=1
             else:
-                pass
-        motor.advance(direction,20,1.0)
-        if direction=="goal":
+                scene = "search_with_GPS"
+            if backlit_counter >= 4:
+                scene = "search_with_GPS"
+            
+        if scene=="goal":
             logging.info("goal!!")
             bz.buzz()
             break
-        else:
-            pass
+        
         if time.time()>=close:
             bz.buzz()
             logging.info("Forced termination/goal judgment")
-
+            
     logger.info("End of all phases")
     GPIO.cleanup()
 

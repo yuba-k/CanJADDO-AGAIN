@@ -6,6 +6,7 @@ import sys
 import RPi.GPIO as GPIO
 import logging
 import signal
+import motor
 
 # #log settings
 # logging.basicConfig(level=logging.INFO)#ログレベルの設定
@@ -26,21 +27,20 @@ def main():
     #ゴールの座標をここに入力！
     coordinate_goal = {'lat':31.731461, 'lon':130.726171}
     logger.info(f"coordinate_goal:{coordinate_goal}")
-    
-    init()
+
     coordinate_new = get_gpsdata()
     while not gps.has_fix:  #GPSデータの取得待ち...     Loading...
         print("Waiting for fix...")
         time.sleep(1)
         coordinate_new = get_gpsdata()
         logger.info(f"{coordinate_new}")
-    move("straight", duty, sec) #とりあえずsec秒前進．前へすすめー！
+    motor.move("straight", duty, sec) #とりあえずsec秒前進．前へすすめー！
 
     while True:
         coordinate_old = coordinate_new
         coordinate_new = get_gpsdata()
-        while(coordinate_old.latitude == coordinate_new.latitude and
-           coordinate_old.longitude == coordinate_new.longitude):
+        while(coordinate_old['lat'] == coordinate_new['lat'] and
+           coordinate_old['lon'] == coordinate_new['lon']):
             coordinate_new = get_gpsdata()  #前回と今回のGPSデータが同一だった場合，新規取得
         logger.info(f"{coordinate_new}")
         
@@ -77,13 +77,13 @@ def main():
         print("{:.3f}".format(degree))
 
         if degree <= -45:
-             move("left", duty, 4*degree/180)   #角度が大きければ大きいほど，曲がる量を多く
-             move("straight", duty, sec)
+            motor.move("left", duty, 4*degree/180)   #角度が大きければ大きいほど，曲がる量を多く
+            motor.move("straight", duty, sec)
         elif degree >= 45:
-             move("right", duty, 4*degree/180)
-             move("straight", duty, sec)
+            motor.move("right", duty, 4*degree/180)
+            motor.move("straight", duty, sec)
         else :#+-45
-             move("straight", duty, sec)
+            motor.move("straight", duty, sec)
 
 # sample
 #            move("right", duty, sec)
@@ -91,19 +91,6 @@ def main():
 #            move("left", duty, sec)
 
 def init():
-    #GPIO configulation
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(11, GPIO.OUT)
-    GPIO.setup(13, GPIO.OUT)
-    GPIO.setup(19, GPIO.OUT)
-    GPIO.setup(26, GPIO.OUT)
-
-    global right, left
-    right = GPIO.PWM(13, 200)       #PWMの周波数は必ず100以上！！ 100未満にすると1パルスにおけるタイヤを動かす負荷が大きく，
-    left = GPIO.PWM(26, 200)        #モータードライバが担う電流量や電力量が過度に増加．波形や動きが不安定に！！
-    right.start(0)
-    left.start(0)
-    
     #GPS initialization
     global uart
     uart = serial.Serial("/dev/serial0", baudrate=9600, timeout=10)

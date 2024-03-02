@@ -1,0 +1,8 @@
+from csv to python_dictionary:
+	awk '{ print "{'\''lat'\'':", $1 "'\''lon'\'':" $2 "},"}' xxx.csv 
+	
+from logfile to csv:
+	awk '{print $7, substr($9, 0, index($9, "}")-1)}' tmp > xxx.csv
+
+install opencv:
+	sudo apt -y install libopencv-dev libopencv-core-dev python3-opencv libopencv-contrib-dev opencv-data

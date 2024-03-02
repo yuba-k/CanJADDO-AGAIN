@@ -16,50 +16,43 @@ import datetime
 # file_handler.setFormatter(formatter)
 # logger.addHandler(file_handler)
 
-
 def move(direction, duty, sec):
-    global r_ph,l_ph,r_pwm,l_pwm,right,left
-    GPIO.setmode(GPIO.BCM)
     logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     t_end = time.time()
-    right_ph = GPIO.output(r_ph, GPIO.LOW)
-    left_ph = GPIO.output(l_ph, GPIO.LOW)
+    right_ph = GPIO.output(11, GPIO.LOW)
+    left_ph = GPIO.output(19, GPIO.LOW)
+    right_duty = left_duty = duty
 
-    if direction == "right" or direction=="search":
-        logger.info(f"duty:{duty}")
+    logger.info(f"duty:{duty}")
+    if direction == "right" or direction=="search":    #右に曲がる
         logger.info(f"right")
-        while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty*0.5)
-            left.ChangeDutyCycle(duty)
-        right.ChangeDutyCycle(0)
-        left.ChangeDutyCycle(0)
-    elif direction == "left":
-        logger.info(f"duty:{duty}")
+        right_duty *= 0.6       #右足を弱く
+#	    left_duty = duty
+        
+    elif direction == "left":   #左に曲がる
         logger.info(f"left")
-        while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty)
-            left.ChangeDutyCycle(duty*0.5)
-        right.ChangeDutyCycle(0)
-        left.ChangeDutyCycle(0)
-    elif direction == "straight" or direction=="goal":
-        logger.info(f"duty:{duty}")
+#       right_duty = duty
+        left_duty *= 0.6        #左足を弱く
+        
+    elif direction == "straight" or direction=="goal":   #まっすぐ
         logger.info(f"straight")
-        while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty)
-            left.ChangeDutyCycle(duty)
-        right.ChangeDutyCycle(0)
-        left.ChangeDutyCycle(0)
+#       right_duty = duty
+#	    left_duty = duty
     elif direction=="back":
-        right_ph = GPIO.output(r_ph, GPIO.HIGH)
-        left_ph = GPIO.output(l_ph, GPIO.HIGH)
-        logger.info(f"duty:{duty}")
         logger.info(f"back")
-        while time.time() <= t_end + sec:
-            right.ChangeDutyCycle(duty)
-            left.ChangeDutyCycle(duty)
-        right.ChangeDutyCycle(0)
-        left.ChangeDutyCycle(0)
+        right_ph = GPIO.output(r_ph, GPIO.HIGH) #モーターを反転
+        left_ph = GPIO.output(l_ph, GPIO.HIGH)
+#       right_duty = duty
+#	    left_duty = duty
+        
+    while time.time() <= t_end + sec:   #実際に動く
+        right.ChangeDutyCycle(right_duty)
+        left.ChangeDutyCycle(left_duty)
+        
+    right.ChangeDutyCycle(0)
+    left.ChangeDutyCycle(0)
+    time.sleep(2)   #モータードライバのオーバーヒート対策
 
 def advance(direction, duty, sec):
     move(direction,duty,sec)
@@ -72,7 +65,7 @@ def avoidance(duty,sec_1,sec_2):#逆光回避
     move("straight",duty,sec_1)
     move("right",duty,sec_2)
 
-def pra(duty,sec_1,sec_2):
+def para(duty,sec_1,sec_2):
     move("back",duty,sec_1)
     move("right",duty,3)
     move("straight",duty,sec_2)
@@ -92,7 +85,7 @@ def init():
     GPIO.setup(r_ph,GPIO.OUT)
     GPIO.setup(l_pwm,GPIO.OUT)
     GPIO.setup(l_ph,GPIO.OUT)
-    right=GPIO.PWM(r_pwm,200)
-    left=GPIO.PWM(l_pwm,200)
+    right = GPIO.PWM(r_pwm, 200)    #PWMの周波数は必ず100以上！！ 100未満にすると1パルスにおけるタイヤを動かす負荷が大きく，
+    left = GPIO.PWM(l_pwm, 200)     #モータードライバが担う電流量や電力量が過度に増加．波形や動きが不安定に！！
     right.start(0)
     left.start(0)
