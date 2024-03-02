@@ -39,6 +39,9 @@ def main():
     while True:
         coordinate_old = coordinate_new
         coordinate_new = get_gpsdata()
+        while(coordinate_old.latitude == coordinate_new.latitude and
+           coordinate_old.longitude == coordinate_new.longitude):
+            coordinate_new = get_gpsdata()  #前回と今回のGPSデータが同一だった場合，新規取得
         logger.info(f"{coordinate_new}")
         
         if not gps.has_fix or coordinate_new['lat'] is None:
@@ -63,6 +66,7 @@ def main():
         #このとき，機体前方を0度とし，左がマイナス，右がプラス
         degree = degree_for_goal-degree_for_me
         degree = (degree + 360) if (degree < -180) else degree
+        degree = (degree - 360) if (180 < degree) else degree
 
         #目標と現在位置との距離を三平方より導出
         distance=math.sqrt(coordinate_diff_goal['lat']**2+coordinate_diff_goal['lon']**2)
