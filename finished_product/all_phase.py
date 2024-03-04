@@ -15,7 +15,7 @@ import logging
 import RPi.GPIO as GPIO
 
 #ログの設定の読み込み
-logging.config.fileConfig('logging.conf')
+logging.config.fileConfig('logging.ini')
 logger = logging.getLogger(__name__)
 
 #強制終了の設定

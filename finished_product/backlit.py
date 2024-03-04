@@ -22,7 +22,7 @@ import motor
 
 def backlight():#逆光判定   return:is backlight
     #ログの設定
-    logging.config.fileConfig('logging.conf')
+    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     
     logger.info('backlight confirmation')

@@ -9,7 +9,7 @@ import logging.config
 
 def	cap(HEIGHT,WIDTH):
     #ログの設定の読み込み
-    logging.config.fileConfig('logging.conf')
+    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     try:
         with picamera.PiCamera() as	camera:

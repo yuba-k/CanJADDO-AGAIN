@@ -4,7 +4,7 @@ import serial
 import adafruit_gps
 import sys
 import RPi.GPIO as GPIO
-import logging
+import logging.config
 import signal
 import motor
 
@@ -13,7 +13,7 @@ def main():
     sec = 10
 
     #ログの設定の読み込み
-    logging.config.fileConfig('logging.conf')
+    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     
     #ゴールの座標をここに入力！
