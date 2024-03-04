@@ -15,7 +15,7 @@ import logging
 import RPi.GPIO as GPIO
 
 #ログの設定の読み込み
-logging.config.fileConfig('logging.ini')
+logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
 #強制終了の設定
@@ -80,7 +80,7 @@ try:
         
         if time.time()>=close:
             bz.buzz()
-            logging.info("Forced termination/goal judgment")
+            logger.info("Forced termination/goal judgment")
             
     logger.info("End of all phases")
     GPIO.cleanup()

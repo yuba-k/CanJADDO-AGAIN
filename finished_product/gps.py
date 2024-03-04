@@ -13,7 +13,7 @@ def main():
     sec = 10
 
     #ログの設定の読み込み
-    logging.config.fileConfig('logging.ini')
+    logging.config.fileConfig('logging.conf')
     logger = logging.getLogger(__name__)
     
     #ゴールの座標をここに入力！
@@ -25,7 +25,7 @@ def main():
         print("Waiting for fix...")
         time.sleep(1)
         coordinate_new = get_gpsdata()
-        logger.info(f"{coordinate_new}")
+    logger.info(f"{coordinate_new}")
     motor.move("straight", duty, sec) #とりあえずsec秒前進．前へすすめー！
 
     while True:
@@ -34,7 +34,7 @@ def main():
         while(coordinate_old['lat'] == coordinate_new['lat'] and
            coordinate_old['lon'] == coordinate_new['lon']):
             coordinate_new = get_gpsdata()  #前回と今回のGPSデータが同一だった場合，新規取得
-        logger.info(f"{coordinate_new}")
+        logger.info(f"現在座標:{coordinate_new}")
         
         if not gps.has_fix or coordinate_new['lat'] is None:
             print("Waiting for fix...")

@@ -11,7 +11,7 @@ from PIL import Image
 
 def parachute():
     #ログの設定の読み込み
-    logging.config.fileConfig('logging.ini')
+    logging.config.fileConfig('logging.conf')
     logger = logging.getLogger(__name__)
     
     img=cv.imread(f"picture.jpg")
