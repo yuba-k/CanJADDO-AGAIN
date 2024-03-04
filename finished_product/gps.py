@@ -63,7 +63,7 @@ def main():
         #目標と現在位置との距離を三平方より導出
         distance=math.sqrt(coordinate_diff_goal['lat']**2+coordinate_diff_goal['lon']**2)
         if distance<=0.00005:
-            return 0#距離が0.005km(5m)以下になったらGPSフェーズ終了
+            return 0#距離が0.00005km(5m)以下になったらGPSフェーズ終了
         distance=distance*math.pow (10,5)#[m]
         logger.info(f"距離{distance}m")
         print("{:.3f}".format(degree))
