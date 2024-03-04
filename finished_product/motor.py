@@ -17,8 +17,10 @@ import datetime
 # logger.addHandler(file_handler)
 
 def move(direction, duty, sec):
+    #ログの設定
     logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
+    
     t_end = time.time()
     right_ph = GPIO.output(11, GPIO.LOW)
     left_ph = GPIO.output(19, GPIO.LOW)
