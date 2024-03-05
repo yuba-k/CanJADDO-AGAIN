@@ -22,7 +22,7 @@ import motor
 # logger.addHandler(file_handler)
 
 def detection():
-    logging.config.fileConfig('logging.ini')
+#    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     logger.info("color cone detection")
     #画像読み込み

@@ -18,7 +18,7 @@ import datetime
 
 def move(direction, duty, sec):
     #ログの設定
-    logging.config.fileConfig('logging.ini')
+#    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     
     t_end = time.time()
