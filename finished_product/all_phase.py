@@ -54,7 +54,7 @@ try:
             IsBacklit = backlit.backlight()
             detect_counter = 0
             backlit_counter = 0
-            scene = "detect_with_camera"               
+        scene = "detect_with_camera"               
         
         if scene == "detect_with_camera":   #カメラによるコーン検知
             backlit_counter = 0
@@ -65,7 +65,7 @@ try:
             elif result == 'goal':
                 scene = 'goal'
             
-            if detect_counter >= 20:
+            if detect_counter >= 25:
                 scene = "avoid_backlit"
         
         if scene == "avoid_backlit":

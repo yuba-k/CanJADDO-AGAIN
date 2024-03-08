@@ -17,7 +17,7 @@ def main():
     logger = logging.getLogger(__name__)
     
     #ゴールの座標をここに入力！
-    coordinate_goal = {'lat':31.731971, 'lon':130.726491}
+    coordinate_goal = {'lat':30.374460, 'lon':130.960039}
     logger.info(f"coordinate_goal:{coordinate_goal}")
 
     coordinate_new = get_gpsdata()
@@ -65,8 +65,8 @@ def main():
         if distance<=0.00005:
             return 0#距離が0.00005km(5m)以下になったらGPSフェーズ終了
         distance=distance*math.pow (10,5)#[m]
-        logger.info(f"距離{distance}m")
-        print("{:.3f}".format(degree))
+        logger.info(f"距離:{distance}m")
+        logger.info("角度:" + "{:.3f}".format(degree))
 
         if degree <= -45:
             motor.move("left", duty, 4*(-degree)/180)   #角度が大きければ大きいほど，曲がる量を多く

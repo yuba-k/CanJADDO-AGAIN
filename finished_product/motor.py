@@ -25,6 +25,7 @@ def move(direction, duty, sec):
     right_ph = GPIO.output(11, GPIO.LOW)
     left_ph = GPIO.output(19, GPIO.LOW)
     right_duty = left_duty = duty
+    left_duty += 2
 
     logger.info(f"duty:{duty}")
     if direction == "right" or direction=="search":    #右に曲がる

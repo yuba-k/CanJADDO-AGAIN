@@ -14,6 +14,7 @@ def parachute():
 #    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     
+    camera.cap(240, 320, 'parachute.jpg')
     img=cv.imread(f"picture.jpg")
     img=cv.flip(img,-1)
     HEIGHT,WIDTH,_=img.shape

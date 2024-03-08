@@ -22,27 +22,31 @@ import motor
 # logger.addHandler(file_handler)
 
 def detection():
+    if not hasattr(detection, 'count'):
+        detection.count = 0
 #    logging.config.fileConfig('logging.ini')
     logger = logging.getLogger(__name__)
     logger.info("color cone detection")
     #画像読み込み
-    camera.cap(960,1280)
-    img=cv.imread(f"picture.jpg")
+    camera.cap(960,1280, f'ImageDetect-{detection.count}.jpg')
+    img=cv.imread(f'ImageDetect-{detection.count}.jpg')
+    detection.count += 1
     img=cv.flip(img,-1)
     HEIGHT,WIDTH,_=img.shape#画像サイズ取得
     # 赤色の検出
     # HSV色空間に変換
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    # 赤色のHSVの値域1
-    hsv_min = np.array([0,64,0])
-    hsv_max = np.array([2,255,255])
-    mask1 = cv.inRange(hsv, hsv_min, hsv_max)
+    # # 赤色のHSVの値域1
+    # hsv_min = np.array([0,64,0])
+    # hsv_max = np.array([2,255,255])
+    # mask1 = cv.inRange(hsv, hsv_min, hsv_max)
     # 赤色のHSVの値域2
-    hsv_min = np.array([165,64,0])
+    hsv_min = np.array([165,130,100])
     hsv_max = np.array([179,255,255])
     mask2 = cv.inRange(hsv, hsv_min, hsv_max)
     # 赤色領域のマスク（255：赤色、0：赤色以外）
-    mask = mask1 + mask2
+    # mask = mask1 + mask2
+    mask=mask2
     # マスキング処理
     masked_img = cv.bitwise_and(img, img, mask=mask)
     cv.imwrite(f"masked.jpg",masked_img)
@@ -61,10 +65,10 @@ def detection():
     # OpenCV 3 の場合
     contours,hierarchy= cv.findContours(img_dilate, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_TC89_KCOS)
     # 小さい輪郭は誤検出として削除する
-    contours = list(filter(lambda x: cv.contourArea(x) > 800, contours))
+    contours = list(filter(lambda x: cv.contourArea(x) > 200, contours))
     # 一番面積が大きい輪郭を選択する。
     if not contours or all(cv.contourArea(x) == 0 for x in contours):
-        logger.info("no red\n")
+        logger.info("no red")
         return "search"
     else:
         print("not empty")
@@ -93,6 +97,8 @@ def detection():
     if (math.isclose(bottom/length,1/2, rel_tol=0, abs_tol=100.0))==True:
         logger.info("tri")
         out=cv.imread(f'dilate.jpg')
+        if y_t==0:
+            moter.advance("right",50,0.3)
         if bottom>=1000:#要調整
             return "goal"
         else:
