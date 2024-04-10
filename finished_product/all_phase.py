@@ -13,14 +13,15 @@ import buzzer as bz
 import time
 import logging
 import RPi.GPIO as GPIO
+import picamera
 
 #ログの設定の読み込み
-logging.config.fileConfig('logging.ini')
+logging.config.fileConfig('/home/pi/yuba/sample/finished_product/logging.ini')
 logger = logging.getLogger(__name__)
 
 #強制終了の設定
 beginning=time.time()#競技開始時間
-close=beginning+(19*60)#強制終了時間
+close=beginning+(18*60)#強制終了時間
 
 #カウント
 detect_counter = 0
@@ -60,7 +61,7 @@ try:
             backlit_counter = 0
             result = image.detection()
             if result == 'search':
-                motor.search(60, 0.5)
+                motor.search(70, 0.5)
                 detect_counter+=1
             elif result == 'goal':
                 scene = 'goal'
@@ -79,7 +80,7 @@ try:
                 scene = "search_with_GPS"
             
         if scene=="goal":
-            motor.advance("goal", 40, 3)
+            motor.advance("goal", 50, 3)
             logging.info("goal!!")
             bz.buzz()
             break
@@ -87,6 +88,7 @@ try:
         if time.time()>=close:
             bz.buzz()
             logger.info("Forced termination/goal judgment")
+            break
             
     logger.info("End of all phases")
     GPIO.cleanup()
@@ -94,3 +96,10 @@ try:
 except KeyboardInterrupt:
     print("****************end********************")
     GPIO.cleanup()
+
+except picamera.exc.PiCameraError:
+    logger.info("camera did not work")
+    motor.advance("goal", 40, 3)
+    logging.info("goal!!")
+    bz.buzz()
+    GPIO.cleanup

@@ -9,7 +9,7 @@ import signal
 import motor
 
 def main():
-    duty = 60
+    duty = 70
     sec = 10
 
     #ログの設定の読み込み
@@ -17,7 +17,7 @@ def main():
     logger = logging.getLogger(__name__)
     
     #ゴールの座標をここに入力！
-    coordinate_goal = {'lat':30.374460, 'lon':130.960039}
+    coordinate_goal = {'lat':30.374266, 'lon':130.960020}
     logger.info(f"coordinate_goal:{coordinate_goal}")
 
     coordinate_new = get_gpsdata()
@@ -26,8 +26,7 @@ def main():
         time.sleep(1)
         coordinate_new = get_gpsdata()
     logger.info(f"{coordinate_new}")
-    motor.move("straight", duty, sec) #とりあえずsec秒前進．前へすすめー！
-
+    motor.move("straight", 75 , sec) #とりあえずsec秒前進．前へすすめー！
     while True:
         coordinate_old = coordinate_new
         coordinate_new = get_gpsdata()

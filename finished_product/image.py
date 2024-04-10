@@ -98,16 +98,16 @@ def detection():
         logger.info("tri")
         out=cv.imread(f'dilate.jpg')
         if y_t==0:
-            moter.advance("right",50,0.3)
+            moter.advance("right",70,0.3)
         if bottom>=1000:#要調整
             return "goal"
         else:
             if x_center<=(WIDTH//3):
-                motor.advance("left",50,0.5)
+                motor.advance("left",70,0.5)
             elif (WIDTH//3)<x_center and x_center<(WIDTH//3*2):
-                motor.advance("straight",50,2.0)
+                motor.advance("straight",70,2.0)
             else:
-                motor.advance("right",50,0.5)
+                motor.advance("right",70,0.5)
         return
     else:
         logger.info('no tri')
